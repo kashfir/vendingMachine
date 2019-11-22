@@ -1,6 +1,6 @@
 #include "clock.h"
 #include "calendar.h"
-#include "clockcalendar.h"
+#include "ClockCalendar.h"
 #include <iostream>
 #include <string>
 #include <iomanip>

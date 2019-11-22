@@ -1,5 +1,5 @@
 #ifndef LIST_H
-# define LIST_H
+#define LIST_H
 
 #include "Node.h"
 
@@ -19,9 +19,9 @@ public:
   // void insertBeforeFirst(T dat);
   void insertAfterLast(T dat);
   //
-  T readFirst();
+  bool readFirst(T&);
   // T readNode(Node<T>* a);
-  int removeFirst();
+  bool removeFirst();
   //
   // //
   // void insertionSort(T value);

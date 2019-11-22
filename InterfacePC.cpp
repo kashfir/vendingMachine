@@ -37,30 +37,16 @@ InterfacePC::~InterfacePC(void){
 }
 
 void InterfacePC::sendCommand(char cmd){
-    ostringstream stream; // <sstream> lib
-    entry registro, leitura;
+    entry leitura;
     if (D025 & cmd) std::cout << "Devolveu R$ 0,25!" << '\n';
     if (D050 & cmd) std::cout << "Devolveu R$ 0,50!" << '\n';
     if (D100 & cmd) std::cout << "Devolveu R$ 1,00!" << '\n';
     if (LMEET & cmd){
-      // stream << systemClock;
-      // registro.time = stream.str();
-
-      registro.time = systemClock;
-      registro.price = 1.50;
-      registro.refri = "MEET";
-      log.insertAfterLast(registro);
-      // log.insertAfterLast(stream.str() + "\t" + "MEET"+ "\t" + "1,50");
-      // log.listAll();
-      leitura = log.readFirst();
-      if (log.removeFirst()){std::cout << "removido o primeiro elemento do log" << '\n';}
-      std::cout << leitura.time << "\t" << leitura.price << "\t" << leitura.refri << '\n';
+      logPC.record(systemClock,1.50,"MEET");
       std::cout << "Saindo um Meet!" << '\n';
       }
     if (LETIRPS & cmd){
-      stream << systemClock;
-      // log.insertAfterLast(stream.str() + "\t" + "ETIRPS"+ "\t" + "1,50");
-      // log.listAll();
+      logPC.record(systemClock,1.50,"ETIRPS");
       std::cout << "Saindo um Etirps!" << '\n';
       }
     if (INSUFF & cmd) std::cout << "Saldo insuficiente!" << '\n';
@@ -100,8 +86,7 @@ void InterfacePC::inputCommand(){
   }
   if (cin.good()){
   if (entrada == 7){
-    std::cout << "Menu de servico:" << '\n' << '\n';
-    std::cout << "Em construcao..." << '\n' << '\n';
+    logPC.dump();
   } else if (entrada>0 && entrada <7){
   std::cout << '\n' << '\n';
   cmd <<= entrada;

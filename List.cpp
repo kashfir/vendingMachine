@@ -39,8 +39,12 @@ template <class T>  void List<T>::insertAfterLast(T dat){
   }
 }
 // //
-template <class T> T List<T>::readFirst(){
-  return head->getVal();
+template <class T> bool List<T>::readFirst(T& target){
+  if (head != 0){
+  target = head->getVal();
+  return 1;
+  }
+  return 0;
 }
 // //
 // template <class T> T List<T>::readNode(Node<T>* a){
@@ -49,7 +53,7 @@ template <class T> T List<T>::readFirst(){
 
 
 
-template <class T> int List<T>::removeFirst(){ //retorna 1 se estiver vazio
+template <class T> bool List<T>::removeFirst(){ //retorna 1 se estiver vazio
 
 
   if (head != 0){
