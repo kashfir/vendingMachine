@@ -6,15 +6,15 @@
 #include <thread>
 #include <sstream>
 #include "Maquina.h"
-#include "clockcalendar.h"
 #include "List.h"
 
 
 
 
 class InterfacePC : public Maquina {
+		// entry registro;
 		ClockCalendar systemClock;
-		List<string> log;
+		List<entry> log;
 public:
 
 	InterfacePC(void);
