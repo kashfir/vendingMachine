@@ -36,6 +36,24 @@ InterfacePC::~InterfacePC(void){
 
 }
 
+void InterfacePC::setSystemTime(){ // WORKING ON LINUX
+  time_t tt;
+  int pm, hr;
+  time (&tt);
+  struct tm * ti = localtime(&tt);
+  if (ti->tm_hour>12){
+    pm = 1;
+    hr = ti->tm_hour-12;
+  }
+  else
+  {
+    pm=0;
+    hr = ti->tm_hour;
+  }
+  systemClock.setClock (hr,ti->tm_min,ti->tm_sec,pm);
+  systemClock.setCalendar(ti->tm_mon,ti->tm_mday,ti->tm_year+1900);
+}
+
 void InterfacePC::sendCommand(char cmd){
     entry leitura;
     if (D025 & cmd) std::cout << "Devolveu R$ 0,25!" << '\n';
@@ -85,9 +103,26 @@ void InterfacePC::inputCommand(){
     return ;
   }
   if (cin.good()){
-  if (entrada == 7){
-    logPC.dump();
-  } else if (entrada>0 && entrada <7){
+    if (entrada>6){
+      switch (entrada) {
+        case 7:{
+          float sales = logPC.getSales();
+          cout << sales << endl;
+        } break;
+        case 8:{
+          int meet, etirps;
+          logPC.readSalesCount(meet, etirps);
+          cout << "Meet: " << meet << '\t' << "Etirps: " << etirps << endl;
+        } break;
+        case 9:{
+          dayPeriod periodo = logPC.maxSalesPeriod();
+          cout << "Madrugada: " << periodo.dawn << '\t'
+          << "Manha: " << periodo.morning << '\t'
+          << "Tarde: " << periodo.afternoon << '\t'
+          << "Noite: " << periodo.evening << endl;
+        } break;
+      }
+    }
   std::cout << '\n' << '\n';
   cmd <<= entrada;
   nextState(cmd);
@@ -95,12 +130,13 @@ void InterfacePC::inputCommand(){
   else {
     std::cout << "Comando nao encontrado!" << '\n';
   }
-  }
 }
+
 
 void InterfacePC::timeCount(){
   struct timespec t;
   clock_gettime(CLOCK_MONOTONIC ,&t);
+  setSystemTime();
    while(1)
    {
      clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);

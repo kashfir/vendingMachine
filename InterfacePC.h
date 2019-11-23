@@ -5,8 +5,10 @@
 #include<limits>
 #include <thread>
 #include <sstream>
+#include <ctime>
 #include "Maquina.h"
 #include "Log.h"
+
 
 
 
@@ -18,6 +20,7 @@ public:
 
 	InterfacePC(void);
 	~InterfacePC(void);
+	void setSystemTime();
 	void sendCommand(char cmd);
 	void printMenu();
 	void inputCommand();

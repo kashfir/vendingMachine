@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <ctime>
+
 using namespace std;
 
   void ClockCalendar::advance (){
@@ -15,33 +15,8 @@ using namespace std;
     }
   };
 
-void ClockCalendar::getSystemTime(){ // WORKING ON LINUX
-  time_t tt;
-  int pm, hr;
-  time (&tt);
-  struct tm * ti = localtime(&tt);
-  if (ti->tm_hour>12){
-    pm = 1;
-    hr = ti->tm_hour-12;
-  }
-  else
-  {
-    pm=0;
-    hr = ti->tm_hour;
-  }
-  Clock::setClock (hr,ti->tm_min,ti->tm_sec,pm);
-  Calendar::setCalendar(ti->tm_mon,ti->tm_mday,ti->tm_year+1900);
-}
 
-// string ClockCalendar::getTime(){
-//   int hr, min, sec,pm;
-//   Clock::readClock(hr,min,sec,pm);
-//   cout << hr<<":"<< min <<":" <<sec << (pm?"PM":"AM") <<endl;
-//   string volta = to_string(hr) + ":" + to_string(min) + ":" + to_string(sec) + (pm?"PM":"AM");
-//
-//   cout << volta;
-//   return volta;
-// }
+
 
 void operator++ (ClockCalendar& t){
 int was_pm=t.is_pm;
