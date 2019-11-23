@@ -1,7 +1,7 @@
 
 #include "Node.h"
 
-template <class T> Node<T>::Node(T dat,Node* nxt, Node* prv){
+template <class T> Node<T>::Node(T dat, Node* nxt, Node* prv){
   val = dat;
   next = nxt;
   prev = prv;
@@ -26,3 +26,4 @@ template <class T> void Node<T>::setPrev(Node* prv){
 }
 
 template class Node<string>;
+template class Node<entry>;

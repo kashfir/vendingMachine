@@ -2,23 +2,25 @@
 #define INTERFACEPC
 
 #include <time.h>
-#include<limits>
+// #include<limits>
 #include <thread>
 #include <sstream>
+#include <ctime>
 #include "Maquina.h"
-#include "clockcalendar.h"
-#include "List.h"
+#include "Log.h"
 
 
 
 
 class InterfacePC : public Maquina {
+		// entry registro;
 		ClockCalendar systemClock;
-		List<string> log;
+		Log logPC;
 public:
 
 	InterfacePC(void);
 	~InterfacePC(void);
+	void setSystemTime();
 	void sendCommand(char cmd);
 	void printMenu();
 	void inputCommand();

@@ -1,9 +1,15 @@
 #ifndef NODE_H
 # define NODE_H
+#include "ClockCalendar.h"
 
 #include <iostream>
 using namespace std;
-
+class entry{
+public:
+  ClockCalendar time;
+  double price;
+  string refri;
+};
 
 template <class T>
 class Node {
