@@ -123,6 +123,7 @@ void InterfacePC::inputCommand(){
         } break;
       }
     }
+
   std::cout << '\n' << '\n';
   cmd <<= entrada;
   nextState(cmd);

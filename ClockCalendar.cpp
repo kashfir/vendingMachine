@@ -7,16 +7,13 @@
 
 using namespace std;
 
-  void ClockCalendar::advance (){
-    int was_pm=is_pm;
-    Clock::advance();
-    if ((was_pm==1) & (is_pm==0)){
-      Calendar::advance();
-    }
-  };
-
-
-
+void ClockCalendar::advance (){
+  int was_pm=is_pm;
+  Clock::advance();
+  if ((was_pm==1) & (is_pm==0)){
+    Calendar::advance();
+  }
+}
 
 void operator++ (ClockCalendar& t){
 int was_pm=t.is_pm;
@@ -24,7 +21,7 @@ int was_pm=t.is_pm;
     if ((was_pm==1) & (t.is_pm==0)){
       t.Calendar::advance();
     }
-};
+}
 
 std::ostream& operator<< (std::ostream& c, ClockCalendar t){
  int hr, min, sec, pm, m, d, y;
