@@ -4,8 +4,8 @@ POSIXFLAG=-pthread -std=c++11
 
 all: main
 
-main: main.o Node.o List.o ClockCalendar.o clock.o calendar.o InterfacePC.o Maquina.o Log.o
-	$(CC) $(POSIXFLAG) main.cpp Node.o List.o ClockCalendar.o clock.o calendar.o InterfacePC.o Maquina.o Log.o -o main
+main: main.o Node.o List.o ClockCalendar.o clock.o calendar.o InterfacePC.o Maquina.o Log.o User.o Vector.o
+	$(CC) $(POSIXFLAG) main.cpp Node.o List.o ClockCalendar.o clock.o calendar.o InterfacePC.o Maquina.o Log.o User.o Vector.o -o main
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) $(POSIXFLAG) main.cpp
@@ -34,5 +34,10 @@ clock.o: clock.cpp
 calendar.o: calendar.cpp
 	$(CC) $(CFLAGS) calendar.cpp
 
+User.o: User.cpp
+	$(CC) $(CFLAGS) User.cpp
+
+Vector.o: Vector.cpp
+	$(CC) $(CFLAGS) Vector.cpp
 clean:
 	rm -rf *o main
