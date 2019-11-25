@@ -8,6 +8,7 @@
 #include <ctime>
 #include "Maquina.h"
 #include "Log.h"
+#include "Vector.h"
 
 
 
@@ -16,6 +17,7 @@ class InterfacePC : public Maquina {
 		// entry registro;
 		ClockCalendar systemClock;
 		Log logPC;
+		Vector admins;
 public:
 
 	InterfacePC(void);
@@ -25,6 +27,8 @@ public:
 	void printMenu();
 	void inputCommand();
 	void timeCount();
+	void adminLogin();
+	void adminMenu(string user);
 };
 
 

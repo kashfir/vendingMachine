@@ -88,7 +88,8 @@ Maquina::Maquina(){
 char Maquina::nextState(char cmd){
 
 switch (cmd){
-	case Nada: state = 0; break;
+	case 0: state = S000; break;
+	case Nada: state = S000; break;
 	case M025:	{
 		switch (state){
 			case S000: state = S025; break;

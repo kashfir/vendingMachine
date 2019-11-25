@@ -1,5 +1,7 @@
 #include <iostream>
 #include "InterfacePC.h"
+
+
 #define NSEC_PER_SEC 1000000000L
 using namespace std;
 
@@ -78,7 +80,8 @@ void InterfacePC::printMenu(){
   std::cout << "3 - Inserir R$ 1,00." << '\n';
   std::cout << "4 - Pedir Devolução." << '\n';
   std::cout << "5 - Requisitar um Meet." << '\n';
-  std::cout << "6 - Requisitar um Etirps." << '\n' << '\n';
+  std::cout << "6 - Requisitar um Etirps." << '\n';
+  std::cout << "7 - Login do administrador" << '\n';
   std::cout << "Saldo atual: R$ ";
   switch (saldo) {
     case S000: std::cout << "0,00"; break;
@@ -95,42 +98,30 @@ void InterfacePC::printMenu(){
 void InterfacePC::inputCommand(){
   int entrada;
   char cmd = 1;
-  std::cin >> entrada;
-  if (cin.fail()){
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(),'\n');
-    cout<<"Comando nao encontrado!"<<endl;
-    return ;
-  }
-  if (cin.good()){
-    if (entrada>6){
-      switch (entrada) {
-        case 7:{
-          float sales = logPC.getSales();
-          cout << sales << endl;
-        } break;
-        case 8:{
-          int meet, etirps;
-          logPC.readSalesCount(meet, etirps);
-          cout << "Meet: " << meet << '\t' << "Etirps: " << etirps << endl;
-        } break;
-        case 9:{
-          dayPeriod periodo = logPC.maxSalesPeriod();
-          cout << "Madrugada: " << periodo.dawn << '\t'
-          << "Manha: " << periodo.morning << '\t'
-          << "Tarde: " << periodo.afternoon << '\t'
-          << "Noite: " << periodo.evening << endl;
-        } break;
-      }
-    }
 
-  std::cout << '\n' << '\n';
-  cmd <<= entrada;
-  nextState(cmd);
+  try{
+    std::cin >> entrada;
+    if (entrada<1 || entrada>9){
+      throw entrada;
+    }
+  }
+  catch (int entrada){
+    cout << string( 20, '\n' );
+    std::cout << "Opcao nao disponivel!" << '\n' << '\n';
+    // std::cout << "Pressione ENTER para continuar." << '\n';
+    // cin.ignore();
+  }
+
+
+  if (entrada==7){
+    adminLogin();
   }
   else {
-    std::cout << "Comando nao encontrado!" << '\n';
+    std::cout << " " << '\n';
+    cmd <<= entrada;
+    nextState(cmd);
   }
+
 }
 
 
@@ -144,4 +135,140 @@ void InterfacePC::timeCount(){
      ++systemClock;
      t.tv_sec++;
     }
+}
+
+void InterfacePC::adminLogin(){
+  std::string user, pass, newPass, newVerify;
+  int i = 0;
+  if (admins.countUsers()==0){
+    std::cout << "Nenhum administrador cadastrado." << '\n';
+    std::cout << "Digite um nome de usuario:" << '\n';
+    cin >> user;
+    while(!i){
+      std::cout << "Digite a nova senha: "; std::cin >> newPass;
+      std::cout << "Digite a nova senha novamente: "; std::cin >> newVerify;
+      if (newPass!=newVerify){
+        std::cout << "Senhas informadas diferem." << '\n';
+
+      }
+      else{i = 1;}
+    }
+    admins.includeAdmin(user,newPass);
+    std::cout << "Usuario "<< user <<" criado com sucesso!" << "\n\n";
+  }
+  std::cout << "Digite o usuario:" << '\n';
+  cin >> user;
+  if (admins.userExists(user)){
+    std::cout << "Digite a senha:" << '\n';
+    cin >> pass;
+    if(admins.login(user,pass)) {
+      adminMenu(user);
+    }
+
+  }
+  else {std::cout << "Usuario nao existente." << '\n';}
+}
+
+void InterfacePC::adminMenu(string user){
+  int entrada, logged, i;
+  string pass, newUser,newPass, newVerify, usr2delete;
+  logged = 1;
+  std::cout << "Bem-vindo " << user << "!\n\n";
+  while(logged){
+    i = 0;
+    std::cout << "1 - Adicionar administrador." << '\n';
+    std::cout << "2 - Remover admnistrador." << '\n';
+    std::cout << "3 - Trocar minha senha." << '\n';
+    std::cout << "4 - Exibir relatorio de arrecadacao." << '\n';
+    std::cout << "5 - Exibir relatorio de vendas por refrigerante." << '\n';
+    std::cout << "6 - Exibir relatroio de vendas por periodo." << '\n';
+    std::cout << "7 - Sair" << "\n\n\n";
+    try{
+      std::cin >> entrada;
+      if (entrada<1 || entrada>7){
+        throw entrada;
+      }
+    }
+    catch (int entrada){
+      cout << string( 20, '\n' );
+      std::cout << "Opcao nao disponivel!" << '\n' << '\n';
+      // std::cout << "Pressione ENTER para continuar." << '\n';
+      cin.ignore();
+    }
+    switch (entrada) {
+      case 1:{
+        std::cout << "Digite um nome de usuario:" << '\n';
+        cin >> newUser;
+        while(i<3){
+          std::cout << "Digite a nova senha: "; std::cin >> newPass;
+          std::cout << "Digite a nova senha novamente: "; std::cin >> newVerify;
+          if (newPass!=newVerify){
+            std::cout << "Senhas informadas diferem." << '\n';
+            i++;
+          }
+          else{
+            admins.includeAdmin(newUser,newPass);
+            std::cout << "Usuario "<< newUser <<" criado com sucesso!" << "\n\n";
+            i=3;
+          }
+        }
+      } break;
+
+      case 2:{
+
+        std::cout << "Digite o nome de usuario:" << '\n';
+        cin >> usr2delete;
+        if (!(usr2delete==user)) admins.removeAdmin(usr2delete);
+        else std::cout << "Nao e possivel remover voce mesmo." << '\n';
+      } break;
+
+      case 3:{
+        std::cout << "Digite a senha atual:" << '\n';
+        cin >> pass;
+        if (admins.login(user,pass)) {
+          while(i<3){
+            std::cout << "Digite a nova senha: "; std::cin >> newPass;
+            std::cout << "Digite a nova senha novamente: "; std::cin >> newVerify;
+            if (newPass!=newVerify){
+              std::cout << "Senhas informadas diferem." << '\n';
+              i++;
+            }
+            else{
+              admins.changePassword(user,newPass);
+              std::cout << "Senha trocada com sucesso." << '\n';
+              i=3;
+            }
+          }
+
+        }
+
+      } break;
+      case 4:{
+        std::cout << "\n\n\nTotal de vendas:\n";
+        float vendas = logPC.getSales();
+        int decimal = static_cast<int>(vendas*10)%10;
+        std::cout << "R$ " << int(vendas) << "," << decimal << "0"<< "\n\n";
+      } break;
+      case 5:{
+        int meet, etirps;
+        std::cout << "\n\n\nTotal de vendas por refrigerante:";
+        logPC.readSalesCount(meet,etirps);
+        std::cout << "Meet: "<< meet << '\n';
+        std::cout << "Etirps: "<< etirps << '\n';
+      } break;
+      case 6:{
+        dayPeriod vendas;
+        vendas = logPC.maxSalesPeriod();
+        std::cout << "\n\n\nTotal de vendas por periodo:\n";
+        std::cout << "Manhã: " << vendas.morning << '\n';
+        std::cout << "Tarde: " << vendas.afternoon << '\n';
+        std::cout << "Noite: " << vendas.evening << '\n';
+        std::cout << "Madrugada: " << vendas.dawn << '\n';
+
+      } break;
+      case 7:{ logged = 0;} break;
+      }
+    }
+
+
 }
