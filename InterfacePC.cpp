@@ -3,7 +3,7 @@
 
 
 #define NSEC_PER_SEC 1000000000L
-using namespace std;
+
 
 
 #define S000	0x1
@@ -31,13 +31,13 @@ using namespace std;
 
 InterfacePC::InterfacePC(void){
   cmd = 1;
-  thread clock(&InterfacePC::timeCount,this);
+  std::thread clock(&InterfacePC::timeCount,this);
   clock.detach();
-  thread stateMachine(&InterfacePC::updateSM,this);
+  std::thread stateMachine(&InterfacePC::updateSM,this);
   stateMachine.detach();
-  // thread display(&InterfacePC::updateDisplay,this);
+  // std::thread display(&InterfacePC::updateDisplay,this);
   // display.detach();
-  thread input(&InterfacePC::updateInput,this);
+  std::thread input(&InterfacePC::updateInput,this);
   input.detach();
 }
 
@@ -189,7 +189,7 @@ void InterfacePC::adminLogin(){
   if (admins.countUsers()==0){
     std::cout << "\n**Nenhum administrador cadastrado." << '\n';
     std::cout << "Digite um nome de usuario:" << '\n';
-    cin >> user;
+    std::cin >> user;
     while(!i){
       std::cout << "Digite a nova senha: "; std::cin >> newPass;
       std::cout << "Digite a nova senha novamente: "; std::cin >> newVerify;
@@ -204,10 +204,10 @@ void InterfacePC::adminLogin(){
   }
   std::cout << "**Por favor faça login." << '\n';
   std::cout << "Digite o usuario:" << '\n';
-  cin >> user;
+  std::cin >> user;
   if (admins.userExists(user)){
     std::cout << "Digite a senha:" << '\n';
-    cin >> pass;
+    std::cin >> pass;
     if(admins.login(user,pass)) {
       adminMenu(user);
     }
@@ -245,7 +245,7 @@ void InterfacePC::adminMenu(std::string user){
     switch (entrada) {
       case 1:{
         std::cout << "Digite um nome de usuario:" << '\n';
-        cin >> newUser;
+        std::cin >> newUser;
         while(i<3){
           std::cout << "Digite a nova senha: "; std::cin >> newPass;
           std::cout << "Digite a nova senha novamente: "; std::cin >> newVerify;
@@ -271,7 +271,7 @@ void InterfacePC::adminMenu(std::string user){
 
       case 3:{
         std::cout << "**Digite a senha atual:" << '\n';
-        cin >> pass;
+        std::cin >> pass;
         if (admins.login(user,pass)) {
           while(i<3){
             std::cout << "**Digite a nova senha: "; std::cin >> newPass;
