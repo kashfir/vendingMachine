@@ -8,7 +8,7 @@ Vector::Vector() {
 }
 
 void Vector::listVec() {
-  std::cout << "Usuarios cadastrados:" << '\n';
+  std::cout << "**Usuarios cadastrados:" << '\n';
     for (int i = 0; i < 20; i++) {
         if(valid[i]) {
            std::cout << vAdmin[i].getUser() << std::endl;
@@ -24,7 +24,7 @@ void Vector::includeAdmin(std::string user, std::string password) {
     do {
         for (int x = 0; x < 20; x++) {
             if (user == vAdmin[x].getUser()) {
-                std::cout << "Usuario ja cadastrado!" << std::endl;
+                std::cout << "**Usuario ja cadastrado!" << std::endl;
                 sai = true;
             }
         }
@@ -52,11 +52,11 @@ void Vector::removeAdmin(std::string user) {
             found = 1;
             valid[i] = 0;
              vAdmin[i].setUser(""); //Numero invalid para liberar o repreenchimento
-            std::cout << "Usuario "<<user <<" removido!\n\n";
+            std::cout << "**Usuario "<<user <<" removido!\n\n";
         }
         i++;
     }
-    if (!found) std::cout << "Usuario nao encontrado! Tente novamente.\n\n";
+    if (!found) std::cout << "**Usuario nao encontrado! Tente novamente.\n\n";
 }
 
 // Alteracao das notas de um determinado aluno
@@ -70,7 +70,7 @@ void Vector::changePassword(std::string user, std::string password) {
         }
         i++;
     }
-    if (!found) std::cout << "Usuario nao encontrado! Tente novamente.\n\n";
+    if (!found) std::cout << "**Usuario nao encontrado! Tente novamente.\n\n";
 }
 
 bool Vector::login(std::string user, std::string password) {
@@ -80,15 +80,15 @@ bool Vector::login(std::string user, std::string password) {
         if (user == vAdmin[i].getUser()) {
             found = 1;
             if(!(vAdmin[i].checkLogin(user,password))){
-              std::cout << "Senha incorreta!" << '\n';
+              std::cout << "**Senha incorreta!" << '\n';
               return 0;
             }
-            std::cout << "Sucesso!" << '\n';
+            std::cout << "**Sucesso!" << '\n';
             return 1;
         }
         i++;
     }
-    if (!found) std::cout << "Usuario nao encontrado! Tente novamente.\n\n";
+    if (!found) std::cout << "**Usuario nao encontrado! Tente novamente.\n\n";
     return 0;
 }
 

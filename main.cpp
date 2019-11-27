@@ -4,11 +4,9 @@
 
 int main(){
    InterfacePC  inter;
+
    while(1){
-      inter.printMenu();
-      inter.inputCommand();
+
    }
-
-
 
 }

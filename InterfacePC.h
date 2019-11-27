@@ -18,6 +18,7 @@ class InterfacePC : public Maquina {
 		ClockCalendar systemClock;
 		Log logPC;
 		Vector admins;
+		char cmd;
 public:
 
 	InterfacePC(void);
@@ -27,6 +28,11 @@ public:
 	void printMenu();
 	void inputCommand();
 	void timeCount();
+
+	void updateSM();
+	void updateDisplay();
+	void updateInput();
+
 	void adminLogin();
 	void adminMenu(string user);
 };
