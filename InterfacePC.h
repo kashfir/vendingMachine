@@ -34,7 +34,7 @@ public:
 	void updateInput();
 
 	void adminLogin();
-	void adminMenu(string user);
+	void adminMenu(std::string user);
 };
 
 

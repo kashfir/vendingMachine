@@ -16,7 +16,7 @@ public:
 class Log {
   List<entry> database;
 public:
-  void record(ClockCalendar t, float p,string r);
+  void record(ClockCalendar t, float p, std::string r);
   void dump();
   float getSales();
   void readSalesCount(int&, int&);

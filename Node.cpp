@@ -25,5 +25,5 @@ template <class T> void Node<T>::setPrev(Node* prv){
   prev = prv;
 }
 
-template class Node<string>;
+template class Node<std::string>;
 template class Node<entry>;

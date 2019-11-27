@@ -216,9 +216,9 @@ void InterfacePC::adminLogin(){
   else {std::cout << "\n**Usuario nao existente." << '\n';}
 }
 
-void InterfacePC::adminMenu(string user){
+void InterfacePC::adminMenu(std::string user){
   int entrada, logged, i;
-  string pass, newUser,newPass, newVerify, usr2delete;
+  std::string pass, newUser,newPass, newVerify, usr2delete;
   logged = 1;
   std::cout << "\n\n**Bem-vindo " << user << "!\n\n";
   while(logged){
@@ -240,7 +240,7 @@ void InterfacePC::adminMenu(string user){
       // cout << string( 20, '\n' );
       std::cout << "**Opcao nao disponivel!" << '\n' << '\n';
       // std::cout << "Pressione ENTER para continuar." << '\n';
-      cin.ignore();
+      std::cin.ignore();
     }
     switch (entrada) {
       case 1:{
@@ -264,7 +264,7 @@ void InterfacePC::adminMenu(string user){
       case 2:{
 
         std::cout << "**Digite o nome de usuario:" << '\n';
-        cin >> usr2delete;
+        std::cin >> usr2delete;
         if (!(usr2delete==user)) admins.removeAdmin(usr2delete);
         else std::cout << "**Nao e possivel remover voce mesmo." << '\n';
       } break;

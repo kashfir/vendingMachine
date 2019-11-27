@@ -1,7 +1,7 @@
 #include "Log.h"
 
 
-void Log::record(ClockCalendar t, float p,string r){
+void Log::record(ClockCalendar t, float p, std::string r){
   entry in;
   in.time = t;
   in.price = p;
@@ -12,7 +12,7 @@ void Log::record(ClockCalendar t, float p,string r){
 void Log::dump(){
   entry buffer;
   while(database.readFirst(buffer)){ // enquanto ha elemento para ser lido
-    cout << buffer.time << '\t' << buffer.price << '\t' << buffer.refri << endl;
+    std::cout << buffer.time << '\t' << buffer.price << '\t' << buffer.refri << std::endl;
     database.removeFirst();
   }
   std::cout << "End of dump." << '\n';
