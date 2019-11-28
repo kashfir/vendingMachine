@@ -122,8 +122,6 @@ void InterfacePC::inputCommand(){
     cmd <<= entrada;
   }
 }
-
-
 void InterfacePC::timeCount(){
    ++systemClock;
 }
@@ -151,7 +149,6 @@ void InterfacePC::updateInput(){
          t.tv_nsec-=NSEC_PER_SEC;
        }
     }
-
 }
 
 
@@ -233,15 +230,12 @@ void InterfacePC::adminMenu(std::string user){
           }
         }
       } break;
-
       case 2:{
-
         std::cout << "**Digite o nome de usuario:" << '\n';
         std::cin >> usr2delete;
         if (!(usr2delete==user)) admins.removeAdmin(usr2delete);
         else std::cout << "**Nao e possivel remover voce mesmo." << '\n';
       } break;
-
       case 3:{
         std::cout << "**Digite a senha atual:" << '\n';
         std::cin >> pass;
@@ -259,7 +253,6 @@ void InterfacePC::adminMenu(std::string user){
               i=3;
             }
           }
-
         }
 
       } break;
@@ -284,7 +277,6 @@ void InterfacePC::adminMenu(std::string user){
         std::cout << "Tarde: " << vendas.afternoon << '\n';
         std::cout << "Noite: " << vendas.evening << '\n';
         std::cout << "Madrugada: " << vendas.dawn << '\n';
-
       } break;
       case 7:{ logPC.dump();} break;
       case 8:{ logged = 0;} break;
@@ -301,9 +293,6 @@ void InterfacePC::tick_timer_intr(void){
     }
     if (bufferTask.elapsed <= 0){// se estiver pronta,
       bufferTask.elapsed = bufferTask.period;
-      // std::cout << "tarefa " << bufferTask.task << " pronta!" << '\n';
-      // bufferTask.task();
-
       readyTaskList.insertAfterLast(bufferTask); // vai para a lista de tarefas prontas para executar
     }
     else{ // se nao

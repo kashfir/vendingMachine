@@ -1,9 +1,8 @@
 #include "InterfacePC.h"
 
 
-InterfacePC* ptr2FuncHandler;
-
-void timeCountWrapper(){
+InterfacePC* ptr2FuncHandler; // ponteiro para a classe
+void timeCountWrapper(){    // funcao global wrapper para envio da funcao membro da classe
   ptr2FuncHandler->InterfacePC::timeCount();
 }
 void updateSMWrapper(){
