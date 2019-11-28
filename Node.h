@@ -1,8 +1,10 @@
+
+
+
 #ifndef NODE_H
 # define NODE_H
-#include "ClockCalendar.h"
+#include "ClockCalendar.h"  //Bibli
 #include <iostream>
-
 
 class entry{
 public:
@@ -20,8 +22,6 @@ typedef struct {
 
 template <class T>
 class Node {
-
-
     T val;
     Node* next;
     Node* prev;

@@ -26,4 +26,5 @@ template <class T> void Node<T>::setPrev(Node* prv){
 }
 
 template class Node<std::string>;
+template class Node<task_t>;
 template class Node<entry>;

@@ -1,10 +1,7 @@
 #include <iostream>
 #include "InterfacePC.h"
 
-
 #define NSEC_PER_SEC 1000000000L
-
-
 
 #define S000	0x1
 #define S025	0x2
@@ -31,18 +28,18 @@
 
 InterfacePC::InterfacePC(void){
   cmd = 1;
-  std::thread clock(&InterfacePC::timeCount,this);
-  clock.detach();
-  std::thread stateMachine(&InterfacePC::updateSM,this);
-  stateMachine.detach();
-  // std::thread display(&InterfacePC::updateDisplay,this);
-  // display.detach();
+  oldState = S000;
+  setSystemTime();
+  printMenu();
+  std::thread isr(&InterfacePC::ISR,this);
+  isr.detach();
+  std::thread rr(&InterfacePC::roundRobinInterrupt,this);
+  rr.detach();
   std::thread input(&InterfacePC::updateInput,this);
   input.detach();
 }
 
 InterfacePC::~InterfacePC(void){
-
 }
 
 void InterfacePC::setSystemTime(){ // WORKING ON LINUX
@@ -102,14 +99,20 @@ void InterfacePC::printMenu(){
 
 void InterfacePC::inputCommand(){
   int entrada;
-  try{
-    std::cin >> entrada;
-    if (entrada<1 || entrada>9){
-      throw entrada;
-    }
+  std::cin >> entrada;
+   try{
+      if(std::cin.fail()){
+          throw "Erro! Insira uma das opcoes numericas do menu.";
+      }
+      if(entrada<1 || entrada>9){
+          std::cout << "**Opcao nao disponivel!" << '\n';
+      }
   }
-  catch (int entrada){
-    std::cout << "**Opcao nao disponivel!" << '\n';
+  catch(const char* error){
+     std::cout<<error<<std::endl;
+     std::cin.clear(); // Clear error flags
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear out the input buffer
+    return;
   }
   if (entrada==7){
     adminLogin();
@@ -122,66 +125,35 @@ void InterfacePC::inputCommand(){
 
 
 void InterfacePC::timeCount(){
-  struct timespec t;
-  clock_gettime(CLOCK_MONOTONIC ,&t);
-  setSystemTime();
-   while(1)
-   {
-     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
-     ++systemClock;
-     t.tv_sec++;
-    }
+   ++systemClock;
 }
-
 void InterfacePC::updateSM(){
-  char state, oldState;
-  oldState = S000;
-  struct timespec t;
-  clock_gettime(CLOCK_MONOTONIC ,&t);
-  setSystemTime();
-  printMenu();
-  while(1)
-  {
-    clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
     state = nextState(cmd);
     if (state != oldState) {printMenu();}
     oldState = state;
     cmd = 1;
-    t.tv_nsec += 20000000L; //20ms
-    if (t.tv_nsec>(NSEC_PER_SEC-1)) { // avoid overflow
-      t.tv_sec+= 1;
-      t.tv_nsec-=NSEC_PER_SEC;
-    }
-  }
 }
-
 void InterfacePC::updateDisplay(){
-  struct timespec t;
-  clock_gettime(CLOCK_MONOTONIC ,&t);
-  setSystemTime();
-  while(1)
-  {
-    clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
-    printMenu();
-    t.tv_sec+= 1;
-  }
+  printMenu();
 }
-
 void InterfacePC::updateInput(){
   struct timespec t;
   clock_gettime(CLOCK_MONOTONIC ,&t);
-  setSystemTime();
-  while(1)
-  {
-    clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
-    inputCommand();
-    t.tv_nsec += 10000000L; //10ms
-    if (t.tv_nsec>(NSEC_PER_SEC-1)) { // avoid overflow
-      t.tv_sec+= 1;
-      t.tv_nsec-=NSEC_PER_SEC;
+   while(1)
+   {
+     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
+
+    inputCommand();//
+
+     t.tv_nsec += 10000000L; //10ms
+       if (t.tv_nsec>(NSEC_PER_SEC-1)) { // avoid overflow
+         t.tv_sec+= 1;
+         t.tv_nsec-=NSEC_PER_SEC;
+       }
     }
-  }
+
 }
+
 
 void InterfacePC::adminLogin(){
   std::string user, pass, newPass, newVerify;
@@ -229,19 +201,20 @@ void InterfacePC::adminMenu(std::string user){
     std::cout << "4 - Exibir relatorio de arrecadacao." << '\n';
     std::cout << "5 - Exibir relatorio de vendas por refrigerante." << '\n';
     std::cout << "6 - Exibir relatroio de vendas por periodo." << '\n';
-    std::cout << "7 - Sair" << "\n\n\n";
-    try{
+    std::cout << "7 - Despejo do log." << '\n';
+    std::cout << "8 - Sair" << "\n\n\n";
+    // try{
       std::cin >> entrada;
-      if (entrada<1 || entrada>7){
-        throw entrada;
-      }
-    }
-    catch (int entrada){
-      // cout << string( 20, '\n' );
-      std::cout << "**Opcao nao disponivel!" << '\n' << '\n';
-      // std::cout << "Pressione ENTER para continuar." << '\n';
-      std::cin.ignore();
-    }
+    //   if (entrada<1 || entrada>8){
+    //     throw entrada;
+    //   }
+    // }
+    // catch (int entrada){
+    //   // cout << string( 20, '\n' );
+    //   std::cout << "**Opcao nao disponivel!" << '\n' << '\n';
+    //   // std::cout << "Pressione ENTER para continuar." << '\n';
+    //   std::cin.ignore();
+    // }
     switch (entrada) {
       case 1:{
         std::cout << "Digite um nome de usuario:" << '\n';
@@ -313,9 +286,103 @@ void InterfacePC::adminMenu(std::string user){
         std::cout << "Madrugada: " << vendas.dawn << '\n';
 
       } break;
-      case 7:{ logged = 0;} break;
+      case 7:{ logPC.dump();} break;
+      case 8:{ logged = 0;} break;
       }
     }
+}
 
+void InterfacePC::tick_timer_intr(void){
+  List<task_t> bufferList;
+  task_t bufferTask;
+  while(taskList.readFirst(bufferTask)){
+    if ((bufferTask.enabled == 1) && (bufferTask.elapsed != 0)){
+      bufferTask.elapsed--;
+    }
+    if (bufferTask.elapsed <= 0){// se estiver pronta,
+      bufferTask.elapsed = bufferTask.period;
+      // std::cout << "tarefa " << bufferTask.task << " pronta!" << '\n';
+      // bufferTask.task();
 
+      readyTaskList.insertAfterLast(bufferTask); // vai para a lista de tarefas prontas para executar
+    }
+    else{ // se nao
+      bufferList.insertAfterLast(bufferTask); // vai para o buffer para retornar a lista de tarefas esperando
+    }
+    taskList.removeFirst();
+  }
+  while(bufferList.readFirst(bufferTask)){
+    taskList.insertAfterLast(bufferTask);
+    bufferList.removeFirst();
+  }
+}
+
+void InterfacePC::ISR(){
+  struct timespec t;
+  clock_gettime(CLOCK_MONOTONIC ,&t);
+   while(1)
+   {
+     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
+     mtx.lock();
+     tick_timer_intr();
+     mtx.unlock();
+     t.tv_nsec += 1000000L; //1ms
+       if (t.tv_nsec>(NSEC_PER_SEC-1)) { // avoid overflow
+         t.tv_sec+= 1;
+         t.tv_nsec-=NSEC_PER_SEC;
+       }
+    }
+}
+
+void InterfacePC::roundRobin(void){
+  task_t taskToRun;
+    if (readyTaskList.readFirst(taskToRun)){
+    std::thread t1(taskToRun.task);
+    t1.detach();
+    readyTaskList.removeFirst();
+    taskList.insertAfterLast(taskToRun);    // if preempted, should re-insertafterLast in readyTaskList
+  }
+}
+
+void InterfacePC::roundRobinInterrupt(void){
+  struct timespec t;
+  clock_gettime(CLOCK_MONOTONIC ,&t);
+   while(1)
+   {
+     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
+     roundRobin();
+     t.tv_nsec += 20000000L; //20ms   // quantum
+       if (t.tv_nsec>(NSEC_PER_SEC-1)) { // avoid overflow
+         t.tv_sec+= 1;
+         t.tv_nsec-=NSEC_PER_SEC;
+       }
+    }
+}
+
+int InterfacePC::addTask(void (*task)(void), int time){
+  task_t newTask;
+  newTask.task = task;
+  newTask.task();
+  newTask.elapsed = time;
+  newTask.period = time;
+  newTask.enabled = 1;
+  taskList.insertAfterLast(newTask);
+  return 1;
+}
+
+void InterfacePC::removeTask(std::function<void (void)> task){
+  typedef void function_t (void);
+  function_t* ptr_task = task.target<function_t>();
+  List<task_t> bufferList;
+  task_t bufferTask;
+  while(taskList.readFirst(bufferTask)){
+    if (bufferTask.task != ptr_task){
+      bufferList.insertAfterLast(bufferTask);
+    }
+    taskList.removeFirst();
+  }
+  while(bufferList.readFirst(bufferTask)){
+  taskList.insertAfterLast(bufferTask);
+  bufferList.removeFirst();
+  }
 }

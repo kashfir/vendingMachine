@@ -280,4 +280,5 @@ template <class T> bool List<T>::removeFirst(){ //retorna 1 se estiver vazio
 
 
 template class List<std::string>; //So the compiler knows that it should create a String type List class
+template class List<task_t>;
 template class List<entry>;

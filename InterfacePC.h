@@ -1,15 +1,13 @@
-#ifndef INTERFACEPC
-#define INTERFACEPC
+#ifndef INTERFACEPC_H
+#define INTERFACEPC_H
 
 #include <time.h>
-// #include<limits>
 #include <thread>
-#include <sstream>
-#include <ctime>
+#include <mutex>
+#include <limits>
 #include "Maquina.h"
 #include "Log.h"
 #include "Vector.h"
-
 
 
 
@@ -18,7 +16,12 @@ class InterfacePC : public Maquina {
 		ClockCalendar systemClock;
 		Log logPC;
 		Vector admins;
-		char cmd;
+		char cmd,state, oldState;
+		std::mutex mtx;
+		List<task_t> taskList;
+		List<task_t> readyTaskList;
+
+		// void (*foo)(void);
 public:
 
 	InterfacePC(void);
@@ -27,6 +30,7 @@ public:
 	void sendCommand(char cmd);
 	void printMenu();
 	void inputCommand();
+
 	void timeCount();
 
 	void updateSM();
@@ -35,6 +39,13 @@ public:
 
 	void adminLogin();
 	void adminMenu(std::string user);
+
+	void tick_timer_intr(void);
+	void ISR();
+	void roundRobin(void);
+	void roundRobinInterrupt(void);
+	int addTask(void (*task)(void), int time);
+	void removeTask(std::function<void (void)>);
 };
 
 
