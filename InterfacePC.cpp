@@ -133,9 +133,9 @@ void InterfacePC::updateSM(){
     oldState = state;
     cmd = 1;
 }
-void InterfacePC::updateDisplay(){
-  printMenu();
-}
+// void InterfacePC::updateDisplay(){
+//   printMenu();
+// }
 void InterfacePC::updateInput(){
   struct timespec t;
   clock_gettime(CLOCK_MONOTONIC ,&t);
@@ -370,13 +370,11 @@ int InterfacePC::addTask(void (*task)(void), int time){
   return 1;
 }
 
-void InterfacePC::removeTask(std::function<void (void)> task){
-  typedef void function_t (void);
-  function_t* ptr_task = task.target<function_t>();
+void InterfacePC::removeTask(void (*task)(void)){
   List<task_t> bufferList;
   task_t bufferTask;
   while(taskList.readFirst(bufferTask)){
-    if (bufferTask.task != ptr_task){
+    if (bufferTask.task != task){
       bufferList.insertAfterLast(bufferTask);
     }
     taskList.removeFirst();

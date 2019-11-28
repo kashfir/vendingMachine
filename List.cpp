@@ -278,7 +278,5 @@ template <class T> bool List<T>::removeFirst(){ //retorna 1 se estiver vazio
 //   return p;
 // }
 
-
-template class List<std::string>; //So the compiler knows that it should create a String type List class
-template class List<task_t>;
-template class List<entry>;
+template class List<task_t>;// Para que o compilador saiba que precisa compilar
+template class List<entry>; // a List com esse tipo.
